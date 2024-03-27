@@ -3,14 +3,15 @@
 #include <SFML/Graphics.hpp>
 
 class PhysicsComponent {
-   private:
+  private:
     float mass;
+    float max_speed;
     sf::Vector2f position;
     sf::Vector2f velocity;
     sf::Vector2f acceleration;
 
-   public:
-    PhysicsComponent(sf::Vector2f position, float mass);
+  public:
+    PhysicsComponent(sf::Vector2f position, float mass, float max_speed);
     PhysicsComponent();
 
     // methods

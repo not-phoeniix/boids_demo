@@ -14,13 +14,13 @@ int main() {
 
     std::vector<Boid*> boids;
 
-    int num_boids = 10;
+    int num_boids = 100;
     for (int i = 0; i < num_boids; i++) {
-        Boid* new_boid = new Boid(
-            Vector2f(rand() % 800, rand() % 600),
-            Color::Red,
-            (rand() % 11) + 10  // value from 10-20
-        );
+        Vector2f pos(rand() % 800, rand() % 600);
+        Color color(rand() % 256, rand() % 256, rand() % 256);
+        int size = rand() % 5 + 5;
+
+        Boid* new_boid = new Boid(pos, color, size);
 
         boids.push_back(new_boid);
     }
@@ -32,7 +32,8 @@ int main() {
         // poll events every frame
         while (window.pollEvent(e)) {
             // close window upon close event or escape key
-            if (e.type == Event::Closed || Keyboard::isKeyPressed(Keyboard::Escape)) {
+            if (e.type == Event::Closed ||
+                Keyboard::isKeyPressed(Keyboard::Escape)) {
                 window.close();
             }
 
@@ -46,7 +47,6 @@ int main() {
         // updates:
         dt = delta_clock.restart();
         for (Boid* boid : boids) {
-            boid->ApplyForce(Vector2f(0, -50));
             boid->Update(dt.asSeconds());
         }
 
@@ -62,6 +62,8 @@ int main() {
     for (Boid* boid : boids) {
         delete boid;
     }
+
+    boids.clear();
 
     return 0;
 }

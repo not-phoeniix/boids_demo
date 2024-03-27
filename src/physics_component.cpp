@@ -4,12 +4,16 @@
 
 using namespace sf;
 
-PhysicsComponent::PhysicsComponent(Vector2f position, float mass) {
+PhysicsComponent::PhysicsComponent(
+    Vector2f position, float mass, float max_speed
+) {
     this->position = position;
     this->mass = mass;
+    this->max_speed = max_speed;
 }
 
-PhysicsComponent::PhysicsComponent() : PhysicsComponent(Vector2f(0, 0), 1.0f) {}
+PhysicsComponent::PhysicsComponent()
+    : PhysicsComponent(Vector2f(0, 0), 1.0f, 1000.0f) {}
 
 void PhysicsComponent::Update(float delta_time) {
     velocity += acceleration * delta_time;
