@@ -13,7 +13,7 @@ PhysicsComponent::PhysicsComponent(
 }
 
 PhysicsComponent::PhysicsComponent()
-    : PhysicsComponent(Vector2f(0, 0), 1.0f, 1000.0f) {}
+: PhysicsComponent(Vector2f(0, 0), 1.0f, 1000.0f) { }
 
 void PhysicsComponent::Update(float delta_time) {
     velocity += acceleration * delta_time;

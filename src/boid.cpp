@@ -29,15 +29,13 @@ void Boid::Update(float delta_time) {
 void Boid::Draw(RenderWindow* window) { window->draw(renderShape); }
 
 void Boid::ApplyForce(Vector2f force) { physics.ApplyForce(force); }
-void Boid::ApplyFriction(float coefficient) {
-    physics.ApplyFriction(coefficient);
-}
+void Boid::ApplyFriction(float coefficient) { physics.ApplyFriction(coefficient); }
 Vector2f Boid::get_position() { return physics.get_position(); }
 
 Vector2f Boid::Seek(Vector2f target, float max_speed) {
     Vector2f dir = target - physics.get_position();
     if (dir != Vector2f(0, 0))
-        dir = Utils::normalize(dir);
+        dir = Utils::vec_normalize(dir);
     Vector2f desired_velocity = dir * max_speed;
     return desired_velocity - physics.get_velocity();
 }
@@ -45,7 +43,7 @@ Vector2f Boid::Seek(Vector2f target, float max_speed) {
 Vector2f Boid::Flee(Vector2f target, float max_speed) {
     Vector2f dir = physics.get_position() - target;
     if (dir != Vector2f(0, 0))
-        dir = Utils::normalize(dir);
+        dir = Utils::vec_normalize(dir);
     Vector2f desired_velocity = dir * max_speed;
     return desired_velocity - physics.get_velocity();
 }
