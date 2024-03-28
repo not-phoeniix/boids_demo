@@ -20,12 +20,12 @@ int main() {
 
     std::vector<Boid*> boids;
 
-    int num_boids = 100;
+    int num_boids = 300;
     for (int i = 0; i < num_boids; i++) {
         Vector2f pos(rand() % 800, rand() % 600);
         Color color(rand() % 256, rand() % 256, rand() % 256);
         int size = rand() % 5 + 5;
-        float view_radius = 50;
+        float view_radius = 60;
 
         Boid* new_boid = new Boid(pos, color, size, view_radius, boids);
 

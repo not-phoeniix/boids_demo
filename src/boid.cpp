@@ -151,9 +151,9 @@ void Boid::Update(
     physics.ApplyForce(Wander(0.3f, 30) * 10.0f);
     physics.ApplyForce(StayInRect(view_bounds) * 10.0f);
 
-    physics.ApplyForce(Alignment(view_radius) * 5.0f);
-    physics.ApplyForce(Separate(view_radius) * 5.0f);
-    physics.ApplyForce(Cohesion(view_radius) * 0.7f);
+    physics.ApplyForce(Alignment(view_radius) * 8.0f);
+    physics.ApplyForce(Separate(view_radius) * 1.0f);
+    physics.ApplyForce(Cohesion(view_radius) * 2.0f);
 
     physics.Update(delta_time);
     render_shape.setPosition(physics.get_position());
