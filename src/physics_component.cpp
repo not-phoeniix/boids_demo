@@ -5,13 +5,8 @@
 
 using namespace sf;
 
-PhysicsComponent::PhysicsComponent(
-    Vector2f position, float mass, float max_speed
-) {
-    this->position = position;
-    this->mass = mass;
-    this->max_speed = max_speed;
-}
+PhysicsComponent::PhysicsComponent(Vector2f position, float mass, float max_speed)
+: position(position), mass(mass), max_speed(max_speed) { }
 
 PhysicsComponent::PhysicsComponent() : PhysicsComponent(Vector2f(0, 0), 1.0f, 1000.0f) { }
 
@@ -39,10 +34,11 @@ Vector2f PhysicsComponent::get_position() { return position; }
 Vector2f PhysicsComponent::get_velocity() { return velocity; }
 Vector2f PhysicsComponent::get_acceleration() { return acceleration; }
 Vector2f PhysicsComponent::get_direction() {
-    Vector2f direction(velocity.x, velocity.y);
-    if (direction != Vector2f(0, 0))
-        direction = Utils::vec_normalize(direction);
-    return direction;
+    if (velocity == Vector2f(0, 0)) {
+        return Vector2f(0, 0);
+    } else {
+        return Utils::vec_normalize(velocity);
+    }
 }
 float PhysicsComponent::get_max_speed() { return max_speed; }
 void PhysicsComponent::set_position(Vector2f pos) { position = pos; }

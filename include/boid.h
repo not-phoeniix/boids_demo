@@ -10,6 +10,7 @@ class Boid {
     sf::ConvexShape render_shape;
     std::vector<Boid*>& container;
     float wander_angle;
+    float view_radius;
 
     // steering behaviors:
 
@@ -26,7 +27,7 @@ class Boid {
     sf::Vector2f CalcFuturePos(float time);
 
    public:
-    Boid(sf::Vector2f pos, sf::Color color, float scale, std::vector<Boid*>& container);
+    Boid(sf::Vector2f pos, sf::Color color, float scale, float view_radius, std::vector<Boid*>& container);
     void Update(float delta_time, const sf::IntRect& view_bounds);
     void Draw(sf::RenderWindow& window);
 

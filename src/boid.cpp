@@ -9,9 +9,10 @@ using namespace sf;
 /// @param pos Position of boid
 /// @param color Color to draw this boid
 /// @param scale Scale to draw this boid
+/// @param view_radius radius around boid to view for flocking behaviors
 /// @param container Vector of boid pointers that this boid is created in
-Boid::Boid(Vector2f pos, Color color, float scale, std::vector<Boid*>& container)
-: container(container) {
+Boid::Boid(Vector2f pos, Color color, float scale, float view_radius, std::vector<Boid*>& container)
+: container(container), view_radius(view_radius), wander_angle(0) {
     // set up boid shape, like a lil arrow :]
     render_shape.setPointCount(4);
     render_shape.setPoint(0, Vector2f(0, -1));
@@ -26,7 +27,7 @@ Boid::Boid(Vector2f pos, Color color, float scale, std::vector<Boid*>& container
 
     // initialize physics component
     physics.set_position(pos);
-    physics.set_max_speed(100);
+    physics.set_max_speed(250);
 }
 
 #pragma region //* Steering behaviors
@@ -58,7 +59,8 @@ Vector2f Boid::Flee(Boid& target) {
 Vector2f Boid::Wander(float time, float radius) {
     Vector2f target_pos = CalcFuturePos(time);
 
-    // calculate random value between -angle_range and +angle_range
+    // calculate random value between -angle_range and +angle_range,
+    //   and use it to modify current wander angle
     float angle_range = M_PI / 15;
     float rand_value = (((float)rand() / RAND_MAX) * 2 - 1) * angle_range;
     wander_angle += rand_value;
@@ -87,9 +89,9 @@ Vector2f Boid::Separate(float radius) {
         if (boid == this)
             continue;
 
-        float d_sqr = Utils::dist_sqr(get_position(), boid->get_position());
-        if (d_sqr > __FLT_EPSILON__ && d_sqr <= radius * radius) {
-            force += Flee(*boid) * (1 / d_sqr);
+        float d = Utils::dist(get_position(), boid->get_position());
+        if (d <= radius) {
+            force += (Flee(boid->get_position()) * (1 / d));
         }
     }
 
@@ -98,19 +100,17 @@ Vector2f Boid::Separate(float radius) {
 
 Vector2f Boid::Cohesion(float radius) {
     Vector2f center_point(0, 0);
+    float count = 0;
 
     for (Boid* boid : container) {
-        // skip current boid
-        if (boid == this)
-            continue;
-
         float d_sqr = Utils::dist_sqr(get_position(), boid->get_position());
-        if (d_sqr <= radius * radius) {
+        if (d_sqr <= (radius * radius)) {
             center_point += boid->get_position();
+            count++;
         }
     }
 
-    center_point /= (float)container.size();
+    center_point /= count;
 
     return Seek(center_point);
 }
@@ -124,7 +124,7 @@ Vector2f Boid::Alignment(float radius) {
             continue;
 
         float d_sqr = Utils::dist_sqr(get_position(), boid->get_position());
-        if (d_sqr <= radius * radius) {
+        if (d_sqr <= (radius * radius)) {
             direction += boid->get_direction();
         }
     }
@@ -143,18 +143,17 @@ Vector2f Boid::CalcFuturePos(float time) {
 
 /// @brief Updates logic for this boid
 /// @param delta_time Time passed since last frame
-/// @param container Vector that this boid is contained in
 /// @param view_bounds Rectangular bounds of the game window's view
 void Boid::Update(
     float delta_time,
     const IntRect& view_bounds
 ) {
-    physics.ApplyForce(Wander(10, 30) * 100.0f);
+    physics.ApplyForce(Wander(0.3f, 30) * 10.0f);
     physics.ApplyForce(StayInRect(view_bounds) * 10.0f);
 
-    // physics.ApplyForce(Alignment(5.0f));
-    // physics.ApplyForce(Separate(5.0f) * 0.01f);
-    // physics.ApplyForce(Cohesion(50));
+    physics.ApplyForce(Alignment(view_radius) * 5.0f);
+    physics.ApplyForce(Separate(view_radius) * 5.0f);
+    physics.ApplyForce(Cohesion(view_radius) * 0.7f);
 
     physics.Update(delta_time);
     render_shape.setPosition(physics.get_position());

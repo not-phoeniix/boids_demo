@@ -10,13 +10,13 @@ float Utils::vec_length(const Vector2f& vector) {
 
 float Utils::dist(const Vector2f& v1, const Vector2f& v2) {
     return sqrt(
-        (v2.x - v1.x) * (v2.x - v2.x) +
+        (v2.x - v1.x) * (v2.x - v1.x) +
         (v2.y - v1.y) * (v2.y - v1.y)
     );
 }
 
 float Utils::dist_sqr(const Vector2f& v1, const Vector2f& v2) {
-    return (v2.x - v1.x) * (v2.x - v2.x) +
+    return (v2.x - v1.x) * (v2.x - v1.x) +
            (v2.y - v1.y) * (v2.y - v1.y);
 }
 
@@ -34,4 +34,11 @@ Vector2f Utils::vec_clamp(const Vector2f& vector, float max_length) {
     }
 
     return return_vec;
+}
+
+IntRect Utils::modify_rect(const IntRect& rect, int size_mod) {
+    return IntRect(
+        rect.getPosition() - Vector2i(size_mod, size_mod),
+        rect.getSize() + Vector2i(2 * size_mod, 2 * size_mod)
+    );
 }

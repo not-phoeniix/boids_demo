@@ -10,4 +10,5 @@ class Utils {
     static float dist_sqr(const sf::Vector2f& v1, const sf::Vector2f& v2);
     static sf::Vector2f vec_normalize(const sf::Vector2f& vector);
     static sf::Vector2f vec_clamp(const sf::Vector2f& vector, float max_length);
+    static sf::IntRect modify_rect(const sf::IntRect& rect, int size_mod);
 };
