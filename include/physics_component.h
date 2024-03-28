@@ -23,6 +23,9 @@ class PhysicsComponent {
     sf::Vector2f get_position();
     sf::Vector2f get_velocity();
     sf::Vector2f get_acceleration();
+    sf::Vector2f get_direction();
+    float get_max_speed();
     void set_position(sf::Vector2f pos);
     void set_mass(float mass);
+    void set_max_speed(float max_speed);
 };

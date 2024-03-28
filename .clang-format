@@ -17,3 +17,5 @@ ColumnLimit: 0
 AllowShortCaseLabelsOnASingleLine: true
 EmptyLineBeforeAccessModifier: Always
 SpaceInEmptyBlock: true
+BreakConstructorInitializers: BeforeColon
+SpaceBeforeCpp11BracedList: true

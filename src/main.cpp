@@ -14,13 +14,13 @@ int main() {
 
     std::vector<Boid*> boids;
 
-    int num_boids = 100;
+    int num_boids = 1000;
     for (int i = 0; i < num_boids; i++) {
         Vector2f pos(rand() % 800, rand() % 600);
         Color color(rand() % 256, rand() % 256, rand() % 256);
         int size = rand() % 5 + 5;
 
-        Boid* new_boid = new Boid(pos, color, size);
+        Boid* new_boid = new Boid(pos, color, size, boids);
 
         boids.push_back(new_boid);
     }
@@ -44,16 +44,20 @@ int main() {
             }
         }
 
+        IntRect view_rect(0, 0, window.getSize().x, window.getSize().y);
+
         // updates:
         dt = delta_clock.restart();
         for (Boid* boid : boids) {
-            boid->Update(dt.asSeconds());
+            boid->Update(dt.asSeconds(), view_rect);
         }
+
+        // std::cout << "fps: " << (1 / dt.asSeconds()) << "\n";
 
         // drawing:
         window.clear(Color::Black);
         for (Boid* boid : boids) {
-            boid->Draw(&window);
+            boid->Draw(window);
         }
         window.display();
     }
