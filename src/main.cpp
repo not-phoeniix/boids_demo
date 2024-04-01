@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "boid.h"
+#include "bsp.h"
 #include "utils.h"
 
 using namespace sf;
@@ -18,7 +19,7 @@ int main() {
     viewport_shape.setOutlineColor(Color::White);
     viewport_shape.setOutlineThickness(2.0f);
 
-    std::vector<Boid*> boids;
+    BSPNode node(IntRect(0, 0, 800, 600), 50);
 
     int num_boids = 300;
     for (int i = 0; i < num_boids; i++) {
@@ -27,9 +28,10 @@ int main() {
         int size = rand() % 5 + 5;
         float view_radius = 60;
 
-        Boid* new_boid = new Boid(pos, color, size, view_radius, boids);
+        Boid* new_boid = new Boid(pos, color, size, view_radius);
 
-        boids.push_back(new_boid);
+        // boids.push_back(new_boid);
+        node.Add(new_boid);
     }
 
     // game loop
@@ -55,31 +57,20 @@ int main() {
         view_rect = Utils::modify_rect(view_rect, -50);
         viewport_shape.setPosition((Vector2f)view_rect.getPosition());
         viewport_shape.setSize((Vector2f)view_rect.getSize());
-        // viewport_shape.setSize(Vector2f(500, 500));
 
         // updates:
         dt = delta_clock.restart();
-        for (Boid* boid : boids) {
-            boid->Update(dt.asSeconds(), view_rect);
-        }
-
-        std::cout << "fps: " << (1 / dt.asSeconds()) << "\n";
+        node.Update(dt.asSeconds(), view_rect);
 
         // drawing:
         window.clear(Color::Black);
         window.draw(viewport_shape);
-        for (Boid* boid : boids) {
-            boid->Draw(window);
-        }
+        node.Draw(window);
+        node.DrawBounds(window);
         window.display();
-    }
 
-    // clean up boid memory afterwards
-    for (Boid* boid : boids) {
-        delete boid;
+        // std::cout << "fps: " << (1 / dt.asSeconds()) << "\n";
     }
-
-    boids.clear();
 
     return 0;
 }

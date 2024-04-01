@@ -19,3 +19,6 @@ EmptyLineBeforeAccessModifier: Always
 SpaceInEmptyBlock: true
 BreakConstructorInitializers: BeforeColon
 SpaceBeforeCpp11BracedList: true
+AllowShortCompoundRequirementOnASingleLine: true
+AllowShortFunctionsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: true

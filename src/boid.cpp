@@ -11,8 +11,8 @@ using namespace sf;
 /// @param scale Scale to draw this boid
 /// @param view_radius radius around boid to view for flocking behaviors
 /// @param container Vector of boid pointers that this boid is created in
-Boid::Boid(Vector2f pos, Color color, float scale, float view_radius, std::vector<Boid*>& container)
-: container(container), view_radius(view_radius), wander_angle(0) {
+Boid::Boid(Vector2f pos, Color color, float scale, float view_radius)
+: view_radius(view_radius), wander_angle(0) {
     // set up boid shape, like a lil arrow :]
     render_shape.setPointCount(4);
     render_shape.setPoint(0, Vector2f(0, -1));
@@ -81,7 +81,7 @@ Vector2f Boid::StayInRect(const IntRect& rectangle) {
     return Vector2f(0, 0);
 }
 
-Vector2f Boid::Separate(float radius) {
+Vector2f Boid::Separate(float radius, std::vector<Boid*>& container) {
     Vector2f force(0, 0);
 
     for (Boid* boid : container) {
@@ -98,7 +98,7 @@ Vector2f Boid::Separate(float radius) {
     return force;
 }
 
-Vector2f Boid::Cohesion(float radius) {
+Vector2f Boid::Cohesion(float radius, std::vector<Boid*>& container) {
     Vector2f center_point(0, 0);
     float count = 0;
 
@@ -110,12 +110,12 @@ Vector2f Boid::Cohesion(float radius) {
         }
     }
 
-    center_point /= count;
+    center_point /= count == 0 ? 1 : count;
 
     return Seek(center_point);
 }
 
-Vector2f Boid::Alignment(float radius) {
+Vector2f Boid::Alignment(float radius, std::vector<Boid*>& container) {
     Vector2f direction(0, 0);
 
     for (Boid* boid : container) {
@@ -125,7 +125,8 @@ Vector2f Boid::Alignment(float radius) {
 
         float d_sqr = Utils::dist_sqr(get_position(), boid->get_position());
         if (d_sqr <= (radius * radius)) {
-            direction += boid->get_direction();
+            Vector2f dir = boid->get_direction();
+            direction += dir;
         }
     }
 
@@ -136,7 +137,7 @@ Vector2f Boid::Alignment(float radius) {
 }
 
 Vector2f Boid::CalcFuturePos(float time) {
-    return physics.get_velocity() * time + get_position();
+    return physics.get_velocity() * time + physics.get_position();
 }
 
 #pragma endregion
@@ -144,16 +145,18 @@ Vector2f Boid::CalcFuturePos(float time) {
 /// @brief Updates logic for this boid
 /// @param delta_time Time passed since last frame
 /// @param view_bounds Rectangular bounds of the game window's view
+/// @param container Vector container to update flocking for this boid
 void Boid::Update(
     float delta_time,
-    const IntRect& view_bounds
+    const IntRect& view_bounds,
+    std::vector<Boid*>& container
 ) {
     physics.ApplyForce(Wander(0.3f, 30) * 10.0f);
     physics.ApplyForce(StayInRect(view_bounds) * 10.0f);
 
-    physics.ApplyForce(Alignment(view_radius) * 8.0f);
-    physics.ApplyForce(Separate(view_radius) * 1.0f);
-    physics.ApplyForce(Cohesion(view_radius) * 2.0f);
+    physics.ApplyForce(Alignment(view_radius, container) * 8.0f);
+    physics.ApplyForce(Separate(view_radius, container) * 1.0f);
+    physics.ApplyForce(Cohesion(view_radius, container) * 2.0f);
 
     physics.Update(delta_time);
     render_shape.setPosition(physics.get_position());

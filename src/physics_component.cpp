@@ -41,6 +41,6 @@ Vector2f PhysicsComponent::get_direction() {
     }
 }
 float PhysicsComponent::get_max_speed() { return max_speed; }
-void PhysicsComponent::set_position(Vector2f pos) { position = pos; }
+void PhysicsComponent::set_position(const Vector2f& pos) { position = pos; }
 void PhysicsComponent::set_mass(float mass) { this->mass = mass; }
 void PhysicsComponent::set_max_speed(float max_speed) { this->max_speed = max_speed; }
