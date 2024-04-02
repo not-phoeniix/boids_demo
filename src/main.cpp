@@ -19,7 +19,7 @@ int main() {
     viewport_shape.setOutlineColor(Color::White);
     viewport_shape.setOutlineThickness(2.0f);
 
-    BSPNode node(IntRect(0, 0, 800, 600), 50);
+    BSPNode node(IntRect(0, 0, 800, 600), 30);
 
     int num_boids = 300;
     for (int i = 0; i < num_boids; i++) {
@@ -69,7 +69,7 @@ int main() {
         node.DrawBounds(window);
         window.display();
 
-        // std::cout << "fps: " << (1 / dt.asSeconds()) << "\n";
+        std::cout << "fps: " << (1 / dt.asSeconds()) << "\n";
     }
 
     return 0;

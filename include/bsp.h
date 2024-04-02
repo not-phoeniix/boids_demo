@@ -15,21 +15,19 @@ class BSPNode {
     BSPNode* right = nullptr;
     BSPNode* parent = nullptr;
 
-    void Split(); // splits this node into 4 sub nodes
-    void Join();  // merges (recursively) all sub nodes
+    void MoveBoidToNode(Boid* boid, BSPNode* node);
+    void ResizeChildBounds();
+    void MoveAllBoids(BSPNode* node);
 
    public:
     BSPNode(const sf::IntRect& bounds, int size_limit, BSPNode* parent = nullptr);
+    BSPNode(int size_limit, BSPNode* parent = nullptr);
     ~BSPNode();
-
-    // methods
 
     void Update(float delta_time, const sf::IntRect& full_rect);
     void Draw(sf::RenderWindow& window);
     void DrawBounds(sf::RenderWindow& window);
     void Add(Boid* boid);
-
-    // getters & setters
 
     sf::IntRect get_bounds();
     void set_bounds(const sf::IntRect& bounds);
