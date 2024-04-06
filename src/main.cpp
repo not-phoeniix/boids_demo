@@ -19,7 +19,7 @@ int main() {
     viewport_shape.setOutlineColor(Color::White);
     viewport_shape.setOutlineThickness(2.0f);
 
-    BSPNode node(IntRect(0, 0, 800, 600), 30);
+    BSPTree tree(IntRect(0, 0, 800, 600), 40);
 
     int num_boids = 300;
     for (int i = 0; i < num_boids; i++) {
@@ -31,7 +31,7 @@ int main() {
         Boid* new_boid = new Boid(pos, color, size, view_radius);
 
         // boids.push_back(new_boid);
-        node.Add(new_boid);
+        tree.Add(new_boid);
     }
 
     // game loop
@@ -60,16 +60,15 @@ int main() {
 
         // updates:
         dt = delta_clock.restart();
-        node.Update(dt.asSeconds(), view_rect);
+        tree.Update(dt.asSeconds(), view_rect);
 
         // drawing:
         window.clear(Color::Black);
         window.draw(viewport_shape);
-        node.Draw(window);
-        node.DrawBounds(window);
+        tree.Draw(window);
         window.display();
 
-        std::cout << "fps: " << (1 / dt.asSeconds()) << "\n";
+        // std::cout << "fps: " << (1 / dt.asSeconds()) << "\n";
     }
 
     return 0;

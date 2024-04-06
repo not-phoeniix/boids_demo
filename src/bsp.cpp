@@ -9,7 +9,7 @@ using namespace sf;
 
 #pragma region
 
-BSPNode::BSPNode(const IntRect& bounds, int size_limit, BSPNode* parent)
+BSPTree::BSPNode::BSPNode(const IntRect& bounds, int size_limit, BSPNode* parent)
 : bounds(bounds), parent(parent), size_limit(size_limit) {
     // initialize bounds rectangle values
     bounds_draw.setPosition((Vector2f)bounds.getPosition());
@@ -19,10 +19,10 @@ BSPNode::BSPNode(const IntRect& bounds, int size_limit, BSPNode* parent)
     bounds_draw.setOutlineThickness(1.0f);
 }
 
-BSPNode::BSPNode(int size_limit, BSPNode* parent)
+BSPTree::BSPNode::BSPNode(int size_limit, BSPNode* parent)
 : BSPNode(IntRect(), size_limit, parent) { }
 
-BSPNode::~BSPNode() {
+BSPTree::BSPNode::~BSPNode() {
     if (left != nullptr) delete left;
     if (right != nullptr) delete right;
 
@@ -31,7 +31,7 @@ BSPNode::~BSPNode() {
     }
 }
 
-void BSPNode::Update(float delta_time, const IntRect& full_rect) {
+void BSPTree::BSPNode::Update(float delta_time, const IntRect& full_rect) {
     // resizing of root node (when parent == nullptr)
     if (parent == nullptr) set_bounds(full_rect);
 
@@ -71,7 +71,7 @@ void BSPNode::Update(float delta_time, const IntRect& full_rect) {
     }
 }
 
-void BSPNode::Draw(RenderWindow& window) {
+void BSPTree::BSPNode::Draw(RenderWindow& window) {
     if (left != nullptr) left->Draw(window);
     if (right != nullptr) right->Draw(window);
 
@@ -80,14 +80,14 @@ void BSPNode::Draw(RenderWindow& window) {
     }
 }
 
-void BSPNode::DrawBounds(sf::RenderWindow& window) {
+void BSPTree::BSPNode::DrawBounds(sf::RenderWindow& window) {
     if (left != nullptr) left->DrawBounds(window);
     if (right != nullptr) right->DrawBounds(window);
 
     window.draw(bounds_draw);
 }
 
-void BSPNode::Add(Boid* boid) {
+void BSPTree::BSPNode::Add(Boid* boid) {
     boids.push_back(boid);
 
     if (boids.size() >= size_limit) {
@@ -112,8 +112,8 @@ void BSPNode::Add(Boid* boid) {
     }
 }
 
-IntRect BSPNode::get_bounds() { return bounds; }
-void BSPNode::set_bounds(const IntRect& bounds) {
+IntRect BSPTree::BSPNode::get_bounds() { return bounds; }
+void BSPTree::BSPNode::set_bounds(const IntRect& bounds) {
     this->bounds = bounds;
     bounds_draw.setPosition((Vector2f)bounds.getPosition());
     bounds_draw.setSize((Vector2f)bounds.getSize());
@@ -161,7 +161,7 @@ void BSPNode::Join() {
 }
 */
 
-void BSPNode::MoveAllBoids(BSPNode* node) {
+void BSPTree::BSPNode::MoveAllBoids(BSPNode* node) {
     if (parent == nullptr) return;
 
     for (int i = boids.size() - 1; i >= 0; i--) {
@@ -171,7 +171,7 @@ void BSPNode::MoveAllBoids(BSPNode* node) {
     }
 }
 
-void BSPNode::MoveBoidToNode(Boid* boid, BSPNode* node) {
+void BSPTree::BSPNode::MoveBoidToNode(Boid* boid, BSPNode* node) {
     // iterate to find index of inputted boid
     int index = 0;
     for (; index < boids.size(); index++) {
@@ -186,7 +186,7 @@ void BSPNode::MoveBoidToNode(Boid* boid, BSPNode* node) {
     node->Add(boid);
 }
 
-void BSPNode::ResizeChildBounds() {
+void BSPTree::BSPNode::ResizeChildBounds() {
     bool h_split = bounds.height > bounds.width;
 
     // if h_split == true, left node is on the top,
@@ -222,6 +222,25 @@ void BSPNode::ResizeChildBounds() {
 
 BSPTree::BSPTree(const sf::IntRect& bounds, int size_limit) {
     root = new BSPNode(bounds, size_limit);
+}
+
+BSPTree::~BSPTree() {
+    delete root;
+}
+
+void BSPTree::Update(float delta_time, const IntRect& full_view) {
+    root->Update(delta_time, full_view);
+}
+
+void BSPTree::Draw(RenderWindow& window) {
+    root->Draw(window);
+    if (draw_bounds) {
+        root->DrawBounds(window);
+    }
+}
+
+void BSPTree::Add(Boid* boid) {
+    root->Add(boid);
 }
 
 #pragma endregion
